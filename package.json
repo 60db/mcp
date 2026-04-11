@@ -1,0 +1,65 @@
+{
+  "name": "60db-mcp-server",
+  "version": "2.0.0",
+  "description": "MCP server for the 60db platform — exposes TTS, STT, voice cloning, meetings, workspaces, billing, memory/RAG, and authorization tools",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "60db-mcp-server": "dist/index.js",
+    "sixtydb-mcp-server": "dist/index.js"
+  },
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "prebuild": "npm run clean",
+    "type-check": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "60db",
+    "sixtydb",
+    "voice-ai",
+    "tts",
+    "stt",
+    "voice-cloning",
+    "memory",
+    "rag",
+    "cerbos",
+    "authorization"
+  ],
+  "author": "60db",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/60db/mcp.git"
+  },
+  "homepage": "https://github.com/60db/mcp#readme",
+  "bugs": {
+    "url": "https://github.com/60db/mcp/issues"
+  },
+  "files": [
+    "dist/",
+    "src/",
+    "README.md",
+    "LICENSE",
+    "claude-config.json",
+    "tsconfig.json"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.6.1",
+    "axios": "^1.7.9",
+    "form-data": "^4.0.5",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

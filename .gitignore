@@ -1,0 +1,68 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+
+# Environment variables — never commit
+.env
+.env.local
+.env.*.local
+.env.*
+
+# Local credentials and tokens
+credentials.json
+secrets.json
+*.pem
+*.key
+.60db-cli-config.json
+.60db-cli-token.json
+
+# Personal Claude Desktop configs — claude-config.json IS committed with
+# placeholder values; copy to claude-config.local.json for personal keys
+claude-config.local.json
+
+# Test artifacts and downloaded media
+*.mp3
+*.wav
+*.ogg
+*.flac
+output/
+downloads/
+test-output/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testing
+coverage/
+.nyc_output/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# OS
+Thumbs.db
+.DS_Store
+
+# MCP Inspector
+.mcp-inspector/
