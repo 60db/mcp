@@ -480,6 +480,15 @@ export const MemorySearchSchema = z.object({
     .describe("Weight given to newer memories"),
   graph_context: z.boolean().default(false)
     .describe("Include knowledge-graph relationships in response"),
+  // Advanced RAG per-request tuning knobs — override server defaults.
+  rerank_top_k: z.number().int().min(1).max(500).optional()
+    .describe("Max candidates the cross-encoder reranks (default: server setting)"),
+  rerank_timeout_ms: z.number().int().min(50).max(5000).optional()
+    .describe("Hard timeout for the rerank call in ms (default: server setting)"),
+  min_rerank_score: z.number().min(0).max(1).optional()
+    .describe("Drop results with rerank score below this threshold (default: server setting)"),
+  fetch_multiplier: z.number().int().min(1).max(10).optional()
+    .describe("In thinking mode, fetch N × max_results candidates before reranking (default: server setting)"),
   response_format: ResponseFormatSchema.default(ResponseFormat.MARKDOWN)
 }).strict();
 export type MemorySearchParams = z.infer<typeof MemorySearchSchema>;

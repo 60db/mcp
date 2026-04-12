@@ -351,20 +351,30 @@ Both fees are automatically refunded on any failure.
     "sixtydb_memory_search",
     {
       title: "Search memories",
-      description: `Hybrid semantic + keyword search over a memory collection.
+      description: `Hybrid semantic + keyword search over a memory collection with optional cross-encoder reranking.
 
 Combines vector similarity (semantic) with BM25 keyword scoring, with optional knowledge-graph context. Searches both user memories and knowledge documents in one call.
+
+**Modes:**
+- \`fast\` — single-query dense retrieval (~100-200ms). Best for simple lookups.
+- \`thinking\` — fetches a wider candidate pool and applies cross-encoder reranking for higher precision (~200-400ms). Best for complex or multi-faceted questions.
 
 **Billing**: flat $0.0003 per query regardless of \`max_results\` or \`mode\`.
 
 **Parameters:**
 - \`query\` (string, required): Search query (max 2,000 chars)
 - \`collection\` (string, optional): Collection to search — defaults to personal
-- \`mode\` (string, optional): \`fast\` (single query, ~100ms) or \`thinking\` (multi-query rerank, ~1-2s)
+- \`mode\` (string, optional): \`fast\` or \`thinking\` (default: fast)
 - \`max_results\` (number, optional): Max results (1-50, default: 10)
 - \`alpha\` (number, optional): 0=keyword only, 1=semantic only (default: 0.8)
 - \`recency_bias\` (number, optional): Weight given to newer memories (0-1, default: 0)
 - \`graph_context\` (boolean, optional): Include knowledge-graph relationships (default: false)
+
+**Advanced reranker knobs** (optional — override server defaults):
+- \`rerank_top_k\` (number): Max candidates to rerank (1-500)
+- \`rerank_timeout_ms\` (number): Hard timeout for rerank call (50-5000ms)
+- \`min_rerank_score\` (number): Drop results below this score (0-1)
+- \`fetch_multiplier\` (number): In thinking mode, fetch N × max_results candidates (1-10)
 
 **Tuning by query type:**
 - Exact phrase match → alpha=0.2, mode=fast
@@ -391,6 +401,10 @@ Combines vector similarity (semantic) with BM25 keyword scoring, with optional k
           graph_context: params.graph_context,
         };
         if (params.collection) body.collection = params.collection;
+        if (params.rerank_top_k != null) body.rerank_top_k = params.rerank_top_k;
+        if (params.rerank_timeout_ms != null) body.rerank_timeout_ms = params.rerank_timeout_ms;
+        if (params.min_rerank_score != null) body.min_rerank_score = params.min_rerank_score;
+        if (params.fetch_multiplier != null) body.fetch_multiplier = params.fetch_multiplier;
 
         const { data, headers } = await postWithHeaders<any>("/memory/search", body);
         const billing = extractBilling(headers);
@@ -403,14 +417,17 @@ Combines vector similarity (semantic) with BM25 keyword scoring, with optional k
         }
         const d = data.data || {};
         const sources = d.sources || [];
+        const rerankerMode = d.trace?.rerank?.mode || "off";
         const md = [
           `**Search results** for "${params.query}"`,
-          `Found ${sources.length} sources · ${d.total_chunks ?? 0} chunks · ${d.latency_ms ?? "?"}ms`,
+          `Found ${sources.length} sources · ${d.total_chunks ?? 0} chunks · ${d.latency_ms ?? "?"}ms` +
+            (rerankerMode !== "off" ? ` · reranker: ${rerankerMode}` : ""),
           "",
           ...sources.slice(0, params.max_results).map((s: any, i: number) => {
             const text = (s.text || "").slice(0, 240);
-            const score = typeof s.score === "number" ? s.score.toFixed(3) : "?";
-            return `**${i + 1}.** (score ${score})${s.title ? ` _${s.title}_` : ""}\n> ${text}${(s.text || "").length > 240 ? "…" : ""}`;
+            const dense = typeof s.score === "number" ? s.score.toFixed(3) : "?";
+            const rerank = typeof s.rerank_score === "number" ? ` rerank=${s.rerank_score.toFixed(4)}` : "";
+            return `**${i + 1}.** (score ${dense}${rerank})${s.title ? ` _${s.title}_` : ""}\n> ${text}${(s.text || "").length > 240 ? "…" : ""}`;
           }),
           fmtBillingHint(billing),
         ].filter(Boolean).join("\n");
