@@ -93,7 +93,7 @@ Use this tool **before** attempting a destructive or gated action to check wheth
         const md = [
           `**Permissions** for role \`${p.role || "unknown"}\` (tier: \`${p.tier || "unknown"}\`)`,
           p.plan_active === false ? `⚠️  Plan inactive — some features may be restricted` : null,
-          p.credit_balance != null ? `Wallet: **$${Number(p.credit_balance).toFixed(4)}**` : null,
+          p.credit_balance != null ? `Workspace Wallet: **$${Number(p.credit_balance).toFixed(4)}**` : null,
           "",
           "**Allowed actions**:",
           ...resourceLines,

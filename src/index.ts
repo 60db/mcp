@@ -99,7 +99,7 @@ async function main() {
   console.error("  - Productivity: sixtydb_60db_list_dictionary, sixtydb_60db_add_dictionary, sixtydb_60db_list_snippets, sixtydb_60db_add_snippet, sixtydb_60db_list_notes, sixtydb_60db_add_note, sixtydb_60db_get_note");
   console.error("  - Meetings: sixtydb_list_meetings, sixtydb_get_meeting, sixtydb_create_meeting");
   console.error("  - Analytics: sixtydb_get_usage_stats");
-  console.error("  - Billing: sixtydb_list_plans, sixtydb_get_subscription, sixtydb_list_invoices, sixtydb_get_invoice");
+  console.error("  - Billing: sixtydb_list_invoices, sixtydb_get_invoice");
   console.error("  - Memory & RAG: sixtydb_memory_ingest, sixtydb_memory_ingest_batch, sixtydb_memory_upload_document, sixtydb_memory_search, sixtydb_memory_context, sixtydb_memory_list_collections, sixtydb_memory_create_collection, sixtydb_memory_get_usage, sixtydb_memory_get_status, sixtydb_memory_delete");
   console.error("  - Authorization: sixtydb_get_permissions, sixtydb_check_permission");
   console.error("");
