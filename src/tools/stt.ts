@@ -39,6 +39,7 @@ export function registerSTTTools(server: McpServer): void {
 - audio_url (string, required): URL to audio file to transcribe (max 25MB; formats: WAV, MP3, M4A, OGG, FLAC, WebM, MP4 audio track)
 - language (string, optional): ISO 639-1 code (e.g. \`en\`, \`hi\`, \`ar\`, \`fr\`). **Omit this field OR pass \`"auto"\`** to enable auto-detection across the 39 supported languages. Specifying a single supported language skips language identification entirely for lowest latency.
 - diarize (boolean, optional): Enable pyannote speaker diarization. When \`true\`, each segment in the response includes a \`speakers\` array with \`SPEAKER_00\`, \`SPEAKER_01\`, … labels. Adds ~50–150 ms of processing latency.
+- context (string, optional): Free-form paragraph describing the session (domain, speakers, jargon) that opens the server-side LLM refinement gate. When supplied, response text is polished for proper nouns, filler removal, and punctuation. Omit to skip refinement. Example: \`"Cricket coaching session. Players: Arjun Mehta, Ishaan Verma. Discussing batting technique."\`. NOTE: the WebSocket \`/v1/stream\` endpoint takes a structured \`{general, text, terms}\` object instead.
 - response_format ('markdown' | 'json', optional): Output format (default: 'markdown')
 
 **Auto-detect:**
@@ -123,10 +124,16 @@ The most reliable way to auto-detect is to **omit the \`language\` field entirel
             ? params.language
             : undefined;
 
+        // `context` is a free-form string on the REST endpoint — trim and
+        // drop when empty so empty input doesn't masquerade as a hint.
+        const contextStr =
+          params.context && params.context.trim() ? params.context.trim() : undefined;
+
         const requestBody = {
           audio_url: params.audio_url,
           ...(explicitLanguage && { language: explicitLanguage }),
-          ...(params.diarize !== undefined && { diarize: params.diarize })
+          ...(params.diarize !== undefined && { diarize: params.diarize }),
+          ...(contextStr !== undefined && { context: contextStr })
         };
 
         const result = await apiClient.post<unknown>("/stt", requestBody);

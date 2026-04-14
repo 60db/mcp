@@ -164,6 +164,15 @@ export const STTTranscribeSchema = z.object({
     "Enable speaker diarization. When true, each segment in the response " +
     "includes a `speakers` array with SPEAKER_00, SPEAKER_01, … labels."
   ),
+  context: z.string().optional().describe(
+    "Free-form string describing the session / domain / speakers / jargon " +
+    "(e.g. 'Cricket coaching session. Players: Arjun Mehta, Ishaan Verma. " +
+    "Discussing batting technique.'). When supplied, the server runs a " +
+    "background LLM refinement pass and the response text is polished for " +
+    "proper nouns, filler removal, and punctuation. Omit to skip refinement. " +
+    "NOTE: this is the REST /v1/transcribe shape — the WebSocket /v1/stream " +
+    "endpoint takes a structured {general, text, terms} object instead."
+  ),
   response_format: ResponseFormatSchema
     .default(ResponseFormat.MARKDOWN)
     .describe("Output format")
