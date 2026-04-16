@@ -1,6 +1,6 @@
-# QLabs MCP Server
+# 60db-mcp Server
 
-Model Context Protocol (MCP) server for the QLabs Voice AI Platform. This server exposes comprehensive tools for text-to-speech, speech-to-text, voice cloning, meeting management, workspace collaboration, and billing operations.
+Model Context Protocol (MCP) server for the 60db Voice AI Platform. This server exposes comprehensive tools for text-to-speech, speech-to-text, voice cloning, meeting management, workspace collaboration, and billing operations.
 
 ## Features
 
@@ -26,12 +26,12 @@ Set required environment variables:
 
 ```bash
 # Authentication (required - one of these)
-export QLABS_API_KEY=sk_your_api_key_here
+export X60DB_API_KEY=sk_your_api_key_here
 # OR
-export QLABS_JWT_TOKEN=your_jwt_token_here
+export X60DB_JWT_TOKEN=your_jwt_token_here
 
 # Optional: API base URL (default: http://localhost:3000)
-export QLABS_API_BASE_URL=https://api.qlabs.com
+export X60DB_API_BASE_URL=https://api.60db.ai
 ```
 
 ## Usage
@@ -49,48 +49,48 @@ npm start
 ### Available Tools
 
 #### Voice Management
-- `qlabs_list_voices` - List available voices with filtering
-- `qlabs_get_voice` - Get detailed voice information
-- `qlabs_create_voice` - Create a cloned voice
+- `60db_list_voices` - List available voices with filtering
+- `60db_get_voice` - Get detailed voice information
+- `60db_create_voice` - Create a cloned voice
 
 #### Text-to-Speech
-- `qlabs_tts_synthesize` - Convert text to speech
-- `qlabs_tts_logs` - Get TTS generation history
-- `qlabs_tts_get` - Get TTS generation details
+- `60db_tts_synthesize` - Convert text to speech
+- `60db_tts_logs` - Get TTS generation history
+- `60db_tts_get` - Get TTS generation details
 
 #### Speech-to-Text
-- `qlabs_stt_transcribe` - Transcribe audio to text
-- `qlabs_stt_logs` - Get transcription history
-- `qlabs_stt_get` - Get transcription details
+- `60db_stt_transcribe` - Transcribe audio to text
+- `60db_stt_logs` - Get transcription history
+- `60db_stt_get` - Get transcription details
 
 #### Workspace Management
-- `qlabs_list_workspaces` - List all workspaces
-- `qlabs_get_workspace` - Get workspace details
-- `qlabs_create_workspace` - Create a new workspace
-- `qlabs_get_workspace_members` - List workspace members
+- `60db_list_workspaces` - List all workspaces
+- `60db_get_workspace` - Get workspace details
+- `60db_create_workspace` - Create a new workspace
+- `60db_get_workspace_members` - List workspace members
 
 #### 60DB Tools
-- `qlabs_60db_list_dictionary` - List pronunciation dictionary entries
-- `qlabs_60db_add_dictionary` - Add dictionary entry
-- `qlabs_60db_list_snippets` - List text snippets
-- `qlabs_60db_add_snippet` - Add text snippet
-- `qlabs_60db_list_notes` - List personal notes
-- `qlabs_60db_add_note` - Add personal note
-- `qlabs_60db_get_note` - Get note details
+- `60db_60db_list_dictionary` - List pronunciation dictionary entries
+- `60db_60db_add_dictionary` - Add dictionary entry
+- `60db_60db_list_snippets` - List text snippets
+- `60db_60db_add_snippet` - Add text snippet
+- `60db_60db_list_notes` - List personal notes
+- `60db_60db_add_note` - Add personal note
+- `60db_60db_get_note` - Get note details
 
 #### Meeting Management
-- `qlabs_list_meetings` - List meetings
-- `qlabs_get_meeting` - Get meeting details
-- `qlabs_create_meeting` - Create new meeting
+- `60db_list_meetings` - List meetings
+- `60db_get_meeting` - Get meeting details
+- `60db_create_meeting` - Create new meeting
 
 #### Analytics
-- `qlabs_get_usage_stats` - Get usage statistics
+- `60db_get_usage_stats` - Get usage statistics
 
 #### Billing
-- `qlabs_list_plans` - List available subscription plans
-- `qlabs_get_subscription` - Get current subscription details
-- `qlabs_list_invoices` - List billing invoices
-- `qlabs_get_invoice` - Get invoice details
+- `60db_list_plans` - List available subscription plans
+- `60db_get_subscription` - Get current subscription details
+- `60db_list_invoices` - List billing invoices
+- `60db_get_invoice` - Get invoice details
 
 ## Response Formats
 
@@ -197,7 +197,7 @@ npm run type-check
 ## Project Structure
 
 ```
-qlabs-mcp-server/
+60db-mcp-server/
 ├── src/
 │   ├── index.ts           # Main entry point
 │   ├── constants.ts       # Configuration constants
@@ -238,12 +238,12 @@ Add to Claude Desktop configuration:
 ```json
 {
   "mcpServers": {
-    "qlabs": {
+    "60db-mcp": {
       "command": "node",
-      "args": ["/path/to/qlabs-mcp-server/dist/index.js"],
+      "args": ["/path/to/60db-mcp-server/dist/index.js"],
       "env": {
-        "QLABS_API_KEY": "sk_your_api_key_here",
-        "QLABS_API_BASE_URL": "https://api.qlabs.com"
+        "X60DB_API_KEY": "sk_your_api_key_here",
+        "X60DB_API_BASE_URL": "https://api.60db.ai"
       }
     }
   }
@@ -256,4 +256,4 @@ MIT
 
 ## Support
 
-For issues and questions, please contact QLabs support or visit the documentation at https://docs.qlabs.com
+For issues and questions, please contact 60db support or visit the documentation at https://docs.60db.ai
