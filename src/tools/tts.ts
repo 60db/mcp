@@ -100,25 +100,60 @@ For JSON format:
         const requestBody = {
           text: params.text,
           voice_id: params.voice_id,
-          ...(params.speed !== undefined && { speed: params.speed }),
-          ...(params.stability !== undefined && { stability: params.stability }),
-          ...(params.similarity !== undefined && { similarity: params.similarity }),
-          ...(params.output_format && { output_format: params.output_format })
+          speed: params.speed ?? 1,
+          stability: params.stability ?? 50,
+          similarity: params.similarity ?? 75
         };
 
-        const result = await apiClient.post<unknown>("/tts", requestBody);
-
-        const formatted = formatTTSLog(result as any, params.response_format);
-
-        const { content } = truncateIfNeeded(
-          formatted,
-          params.response_format === ResponseFormat.JSON
+        // Response comes as concatenated JSON chunks, each like {"result":{"audioContent":"..."}}
+        const axiosInstance = apiClient.getAxiosInstance();
+        const response = await axiosInstance.post<string>(
+          "/tts-synthesize",
+          requestBody,
+          { responseType: "text" }
         );
+
+        const raw = typeof response.data === "string" ? response.data : JSON.stringify(response.data);
+
+        // Parse concatenated JSON objects by splitting on `}{` boundaries
+        const jsonStrings = raw
+          .replace(/\}\s*\{/g, "}|{")
+          .split("|");
+
+        const audioChunks: string[] = [];
+        for (const chunk of jsonStrings) {
+          try {
+            const parsed = JSON.parse(chunk.trim());
+            if (parsed.result?.audioContent) {
+              audioChunks.push(parsed.result.audioContent);
+            }
+          } catch {
+            // Skip unparseable chunks
+          }
+        }
+
+        const audioContent = audioChunks.join("");
+        if (!audioContent) {
+          throw new Error("No audio content received from TTS API");
+        }
+
+        if (params.response_format === ResponseFormat.JSON) {
+          return {
+            content: [{
+              type: "text",
+              text: JSON.stringify({
+                audioContent,
+                text: params.text,
+                voice_id: params.voice_id
+              }, null, 2)
+            }]
+          };
+        }
 
         return {
           content: [{
             type: "text",
-            text: content
+            text: `## TTS Synthesis Complete\n\n**Text:** ${params.text}\n**Voice ID:** ${params.voice_id}\n**Speed:** ${requestBody.speed}\n**Stability:** ${requestBody.stability}\n**Similarity:** ${requestBody.similarity}\n\nAudio content received (${audioChunks.length} chunks, ${audioContent.length} characters of base64 audio).`
           }]
         };
       } catch (error) {
